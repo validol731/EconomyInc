@@ -31,6 +31,7 @@ public class ContainerSeller extends Container {
 		{
 			TileEntityBlockSeller te = (TileEntityBlockSeller)entity;
 			this.tile = te;
+
 			IItemHandler inventory = te.getHandler();
 			this.addSlot(new SlotItemHandler(inventory, 0, 80, 35));
 			this.bindPlayerInventory(playerInv);
@@ -61,12 +62,12 @@ public class ContainerSeller extends Container {
 	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) 
 	{
 		  ItemStack stack = ItemStack.EMPTY;
+
 	        Slot slot = inventorySlots.get(index);
 
 	        if (slot != null && slot.getHasStack()) {
 	            ItemStack stackInSlot = slot.getStack();
 	            stack = stackInSlot.copy();
-
 	            int containerSlots = inventorySlots.size() - playerIn.inventory.mainInventory.size();
 
 	            if (index < containerSlots) {

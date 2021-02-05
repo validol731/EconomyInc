@@ -24,11 +24,12 @@ import net.minecraftforge.items.ItemStackHandler;
 public class TileEntityBlockSeller extends TileEntity implements INamedContainerProvider, ITickableTileEntity {
 
 	private static final TranslationTextComponent NAME = new TranslationTextComponent("container.seller");
-	ItemStackHandler inventory_seller = new ItemStackHandler(1); //STACK HANDLER FOR ONE SLOT = 0 
+	ItemStackHandler inventory_seller = new ItemStackHandler(1); //STACK HANDLER FOR ONE SLOT = 0
 	private String owner = ""; 
 	private String ownerName = "";
 	private double funds_total;
 	private double cost;
+	private double count;
 	private boolean created;
 	private int amount;
 	private String item = "";
@@ -128,6 +129,16 @@ public class TileEntityBlockSeller extends TileEntity implements INamedContainer
 	    {
 	        return this.cost;
 	    }
+
+		public void setCount(double countS)
+		{
+			this.count = countS;
+		}
+
+		public double getCount()
+		{
+			return this.count;
+		}
 	    
 	    public void setFundsTotal(double fundsS)
 	    {
@@ -180,6 +191,7 @@ public class TileEntityBlockSeller extends TileEntity implements INamedContainer
 			compound.putString("ownerS", this.owner);
 			compound.putString("ownerName", this.ownerName);
 			compound.putDouble("cost", this.cost);
+			compound.putDouble("count", this.count);
 			compound.putInt("amount", this.amount);
 			compound.putString("item", this.item);
 			compound.putDouble("funds_total", this.funds_total);
@@ -201,6 +213,7 @@ public class TileEntityBlockSeller extends TileEntity implements INamedContainer
 			this.owner = compound.getString("ownerS");
 			this.ownerName = compound.getString("ownerName");
 			this.cost = compound.getDouble("cost");
+			this.count = compound.getDouble("count");
 			this.amount = compound.getInt("amount");
 			this.item = compound.getString("item");
 			this.funds_total = compound.getDouble("funds_total");

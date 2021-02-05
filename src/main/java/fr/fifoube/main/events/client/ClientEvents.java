@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Quaternion;
@@ -61,32 +62,36 @@ public class ClientEvents {
 							IRenderTypeBuffer buffer = event.getBuffers();
 							Direction direction = (Direction)world.getBlockState(pos).get(BlockSeller.FACING);
 							matrixStack.push();					
-							ItemStack stack = new ItemStack(te.getStackInSlot(0).getItem(), 1);
+							ItemStack stack = new ItemStack(te.getStackInSlot(0).getItem(),1);
 							if(te.getAmount() == 0)
 							{
 								stack = new ItemStack(Blocks.BARRIER, 1);
 							}
 							Vector3d vec = event.getInfo().getProjectedView();
 							matrixStack.translate(-vec.x, -vec.y, -vec.z);
-							matrixStack.translate(x + 0.5, y + 0.5, z + 0.5);
-				            matrixStack.scale(0.5F, 0.5F, 0.5F);
 				            switch (direction) {
 							case NORTH:
+								matrixStack.translate(x + 0.5, y + 0.5, z + 0.8);
 								matrixStack.rotate(new Quaternion(new Vector3f(0, 1.0f, 0), 180f, true));
 								break;
 							case SOUTH:
+								matrixStack.translate(x + 0.5, y + 0.5, z + 0.2);
 								matrixStack.rotate(new Quaternion(new Vector3f(0, 1.0f, 0), 0f, true));
 								break;	
 							case WEST:
+								matrixStack.translate(x + 0.8, y + 0.5, z + 0.5);
 								matrixStack.rotate(new Quaternion(new Vector3f(0, 1.0f, 0), -90f, true));
 								break;
 							case EAST:
+								matrixStack.translate(x + 0.2, y + 0.5, z + 0.5);
 								matrixStack.rotate(new Quaternion(new Vector3f(0, 1.0f, 0), 90f, true));
 								break;
 							default:
+								matrixStack.translate(x + 0.5, y + 0.5, z + 0.5);
 								matrixStack.rotate(new Quaternion(new Vector3f(0, 1.0f, 0), 180f, true));
 								break;
 							}
+							matrixStack.scale(0.5F, 0.5F, 0.5F);
 							renderM.renderItem(stack, TransformType.FIXED, 15728880, OverlayTexture.NO_OVERLAY, matrixStack, buffer);
 						    matrixStack.pop();						
 						   }

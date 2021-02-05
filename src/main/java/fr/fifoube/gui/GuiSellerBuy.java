@@ -46,6 +46,7 @@ public class GuiSellerBuy extends Screen
 	private String owner = "";
 	private String itemName = "";
 	private double cost;
+	private double count;
 	private int amount;
 	private double fundsTotalRecovery;
 	private String sellerOwner = "";
@@ -79,6 +80,7 @@ public class GuiSellerBuy extends Screen
 			this.owner = tile.getOwnerName();
 			this.itemName = tile.getItem();
 			this.cost = tile.getCost();
+			this.count = tile.getCount();
 			this.slot1 = this.addButton(new Button(width / 2 - 50, height / 2 + 27, 100, 20, new TranslationTextComponent("title.buy"),(press) -> actionPerformed(0))); 
              
 			sellerOwner = tile.getOwner();
@@ -119,21 +121,21 @@ public class GuiSellerBuy extends Screen
 										{
 											if(data.getMoney() >= tile.getCost()) //IF THE PLAYER HAS ENOUGH MONEY
 											{
-												if(tile.getAmount() >= 1)
+												if(tile.getAmount() >= tile.getCount())
 												{
 													boolean admin = tile.getAdmin();
 													if(!admin)
 													{
 														double fundTotal = tile.getFundsTotal(); // WE GET THE TOTAL FUNDS
 														int amount = tile.getAmount(); // GET AMOUNT OF THE TILE ENTITY
-														PacketsRegistery.CHANNEL.sendToServer(new PacketSellerFundsTotal(fundTotal, tile.getCost(), x,y,z, amount, false)); //SENDING PACKET TO LET SERVER KNOW CHANGES WITH TOTAL FUNDS, COORDINATES AND AMOUNT
+														PacketsRegistery.CHANNEL.sendToServer(new PacketSellerFundsTotal(fundTotal, tile.getCost(),tile.getCount(), x,y,z, amount, false)); //SENDING PACKET TO LET SERVER KNOW CHANGES WITH TOTAL FUNDS, COORDINATES AND AMOUNT
 														tile.markDirty();
 													}
 													else if(admin)
 													{
 														double fundTotal = tile.getFundsTotal(); // WE GET THE TOTAL FUNDS
 														int amount = tile.getAmount(); // GET AMOUNT OF THE TILE ENTITY
-														PacketsRegistery.CHANNEL.sendToServer(new PacketSellerFundsTotal(fundTotal, tile.getCost(), x,y,z, amount, false)); //SENDING PACKET TO LET SERVER KNOW CHANGES WITH TOTAL FUNDS, COORDINATES AND AMOUNT
+														PacketsRegistery.CHANNEL.sendToServer(new PacketSellerFundsTotal(fundTotal, tile.getCost(),tile.getCount(), x,y,z, amount, false)); //SENDING PACKET TO LET SERVER KNOW CHANGES WITH TOTAL FUNDS, COORDINATES AND AMOUNT
 														tile.markDirty();
 													}
 												}
@@ -160,7 +162,7 @@ public class GuiSellerBuy extends Screen
 				{
 					tile.setFundsTotal(0);
 					tile.markDirty();
-					PacketsRegistery.CHANNEL.sendToServer(new PacketSellerFundsTotal(fundsTotalRecovery, 0, x,y,z, amount, true)); //SENDING PACKET TO LET SERVER KNOW CHANGES WITH TOTAL FUNDS, COORDINATES AND AMOUNT
+					PacketsRegistery.CHANNEL.sendToServer(new PacketSellerFundsTotal(fundsTotalRecovery, 0,0, x,y,z, amount, true)); //SENDING PACKET TO LET SERVER KNOW CHANGES WITH TOTAL FUNDS, COORDINATES AND AMOUNT
 				}			
 			}
 			
@@ -180,35 +182,41 @@ public class GuiSellerBuy extends Screen
 			this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.seller") + owner, (this.width / 2) - 120, (this.height / 2)- 55, Color.BLACK.getRGB());
 			this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.item") + itemName, (this.width / 2) - 120, (this.height / 2)- 45, Color.BLACK.getRGB());
 			this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.cost") + cost, (this.width / 2) - 120, (this.height / 2)- 35, Color.BLACK.getRGB());
-			this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.amount") + amount, (this.width / 2) - 120, (this.height / 2)- 25, Color.BLACK.getRGB());
+			this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.count") + count, (this.width / 2) - 120, (this.height / 2)- 25, Color.BLACK.getRGB());
+			this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.amount") + amount, (this.width / 2) - 120, (this.height / 2)- 15, Color.BLACK.getRGB());
 			if(sellerOwner.equals(worldPlayer))
 			{
-				this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.fundsToRecover") + fundsTotalRecovery, (this.width / 2) - 120, (this.height / 2)- 15, Color.BLACK.getRGB());
+				this.font.drawString(matrixStack, TextFormatting.BOLD + I18n.format("title.fundsToRecover") + fundsTotalRecovery, (this.width / 2) - 120, (this.height / 2)- 5, Color.BLACK.getRGB());
 			}
 
 			
 			super.render(matrixStack, mouseX, mouseY, partialTicks);
+			int posimgX = i + 225;
+			int posimgY = j + 22;
+			if(mouseX >= (posimgX - 20) && mouseX <= (posimgX + 20)) {
+				if (mouseY >= (posimgY - 15) && mouseY <= (posimgY + 20)) {
+					this.renderTooltip(matrixStack, tile.getStackInSlot(0), mouseX - 50, mouseY + 30);
+				}
+			}
 	        drawImageInGui();
 
 	    }
 
-		public void drawImageInGui() 
+		public void drawImageInGui()
 		{
 	        int i = this.guiLeft;
 	        int j = this.guiTop;
 	        GL11.glPushMatrix();
-			GlStateManager.enableRescaleNormal();
+			GlStateManager.enableDepthTest();
 		    RenderHelper.enableStandardItemLighting();
 		    GL11.glScaled(2, 2, 2);
-		    ItemStack stack = new ItemStack(Blocks.BARRIER,1);
-		    if(!(tile.getAmount() == 0))
+		    ItemStack stack = new ItemStack(Blocks.BARRIER,(int)tile.getCount());
+		    if(!(tile.getAmount() < tile.getCount()))
 		    {
-			    stack = new ItemStack(tile.getStackInSlot(0).getItem(), 1);
+			    stack = new ItemStack(tile.getStackInSlot(0).getItem(), (int)tile.getCount());
 		    }
-		    this.itemRenderer.renderItemIntoGUI(stack, (i / 2) + 105 , (j /2) + 5);
-		    RenderHelper.disableStandardItemLighting();
-		    GlStateManager.disableRescaleNormal();
-		    GL11.glPopMatrix();   
+		    this.itemRenderer.renderItemAndEffectIntoGUI( stack, (i / 2) + 105 , (j /2) + 5);
+		    GL11.glPopMatrix();
 		}
 
 }

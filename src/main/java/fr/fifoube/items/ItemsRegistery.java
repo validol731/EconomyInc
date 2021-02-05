@@ -91,7 +91,7 @@ public class ItemsRegistery {
 		event.getRegistry().register(new ItemGear(new Item.Properties().group(ModEconomyInc.EIC).maxStackSize(64)).setRegistryName("item_gear"));
 		event.getRegistry().register(new ItemGearMechanism(new Item.Properties().group(ModEconomyInc.EIC).maxStackSize(64)).setRegistryName("item_gearmechanism"));
 
-		event.getRegistry().register(new ItemGoldNuggetSubs(new Item.Properties().group(ModEconomyInc.EIC).maxStackSize(1)).setRegistryName("item_goldnuggetsubs"));
+		event.getRegistry().register(new ItemGoldNuggetSubs(new Item.Properties().group(ModEconomyInc.EIC).maxStackSize(64)).setRegistryName("item_goldnuggetsubs"));
 
 
 

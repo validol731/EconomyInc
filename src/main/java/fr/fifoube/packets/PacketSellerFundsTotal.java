@@ -30,6 +30,7 @@ public class PacketSellerFundsTotal {
 
 	private double funds;
 	private double cost;
+	private double count;
 	private double fundstotal;
 	private int x;
 	private int y;
@@ -41,10 +42,11 @@ public class PacketSellerFundsTotal {
 		
 	}
 	
-	public PacketSellerFundsTotal(double funds, double cost, int xS, int yS, int zS, int amountS, boolean recoveryS)
+	public PacketSellerFundsTotal(double funds,  double cost, double count, int xS, int yS, int zS, int amountS, boolean recoveryS)
 	{
 		this.funds= funds;
 		this.cost = cost;
+		this.count = count;
 		this.x = xS;
 		this.y = yS;
 		this.z = zS;
@@ -59,12 +61,13 @@ public class PacketSellerFundsTotal {
 	{
 		double funds = buf.readDouble();
 		double cost = buf.readDouble();
+		double count = buf.readDouble();
 		int x = buf.readInt();
 		int y = buf.readInt();
 		int z = buf.readInt();
 		int amount = buf.readInt();
 		boolean recovery = buf.readBoolean();
-		return new PacketSellerFundsTotal(funds, cost, x, y, z, amount, recovery);
+		return new PacketSellerFundsTotal(funds, cost,count, x, y, z, amount, recovery);
 
 	}
 	
@@ -72,6 +75,7 @@ public class PacketSellerFundsTotal {
 	{
 		buf.writeDouble(packet.funds);
 		buf.writeDouble(packet.cost);
+		buf.writeDouble(packet.count);
 		buf.writeInt(packet.x);
 		buf.writeInt(packet.y);
 		buf.writeInt(packet.z);
@@ -101,7 +105,7 @@ public class PacketSellerFundsTotal {
 								if(admin == false) // NOT UNLIMITED STACK
 								{
 									CompoundNBT nbt = te.getStackInSlot(0).getTag();
-									ItemStack stack = new ItemStack(te.getStackInSlot(0).getItem(), 1);
+									ItemStack stack = new ItemStack(te.getStackInSlot(0).getItem(), (int) packet.count);
 									if(nbt != null)
 									{
 										stack.getOrCreateTag().merge(nbt);
@@ -109,7 +113,7 @@ public class PacketSellerFundsTotal {
 									boolean flag = player.inventory.addItemStackToInventory(stack);
 									if(flag)
 									{
-										te.getStackInSlot(0).split(1);
+										te.getStackInSlot(0).split((int) packet.count);
 										te.setFundsTotal(packet.fundstotal); // SERVER SET THE FUNDS TOTAL FROM WHAT WE SENT
 										te.markDirty();
 										//
@@ -134,7 +138,7 @@ public class PacketSellerFundsTotal {
 								else if(admin == true) // UNLIMITED STACK
 								{
 									CompoundNBT nbt = te.getStackInSlot(0).getTag();
-									ItemStack stack = new ItemStack(te.getStackInSlot(0).getItem(), 1);
+									ItemStack stack = new ItemStack(te.getStackInSlot(0).getItem(), (int) packet.count);
 									if(nbt != null)
 									{
 										stack.getOrCreateTag().merge(nbt);

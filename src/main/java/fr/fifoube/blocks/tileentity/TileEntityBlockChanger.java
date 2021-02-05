@@ -156,35 +156,43 @@ public class TileEntityBlockChanger extends TileEntity implements INamedContaine
 			if(te instanceof TileEntityBlockChanger)
 			{
 				TileEntityBlockChanger tile = (TileEntityBlockChanger)te;
-				ItemStack slot0 = inventory.getStackInSlot(0);
-				ItemStack slot1 = inventory.getStackInSlot(1);
-				ItemStack slot2 = inventory.getStackInSlot(2);
-				if(slot0 != null && slot1 != null && slot2 != null)
-				if(!world.isRemote && slot0.getItem() == ItemsRegistery.ITEM_GOLDNUGGET)
+				ItemStack slot0_Nugget = inventory.getStackInSlot(0);
+				ItemStack slot1_Card = inventory.getStackInSlot(1);
+				ItemStack slot2_OUT = inventory.getStackInSlot(2);
+				if(slot0_Nugget != null && slot1_Card != null && slot2_OUT != null)
+				if(!world.isRemote && slot0_Nugget.getItem() == ItemsRegistery.ITEM_GOLDNUGGET)
 				{
-						if(slot1.getItem() == ItemsRegistery.ITEM_CREDITCARD)
+						if(slot1_Card.getItem() == ItemsRegistery.ITEM_CREDITCARD)
 						{
-							 if(slot1.hasTag() && tile.getEntityPlayer() != null)
+							 if(slot1_Card.hasTag() && tile.getEntityPlayer() != null)
 							    {
-						        	String nameCard = slot1.getTag().getString("OwnerUUID");
+						        	String nameCard = slot1_Card.getTag().getString("OwnerUUID");
 									String nameGame =  tile.getEntityPlayer().getUniqueID().toString();
 									if(nameCard.equals(nameGame))
 									{
-										if(slot2.isEmpty())
+										if(slot2_OUT.isEmpty())
 										{
 											if(timePassed == 0)
 											{
-												String w =  String.valueOf(world.getRandom().nextDouble()).substring(0,4);
-												if(slot0.hasTag())
+												//String w =  String.valueOf(world.getRandom().nextDouble()).substring(0,4);
+												double weight = 0;
+												for( int i = slot0_Nugget.getCount(); i>0; i--){
+
+													weight +=  world.getRandom().nextDouble() * 0.9;
+												}
+												weight *= ConfigFile.multiplierGoldNuggetWeight;
+												String w =  String.valueOf(weight).substring(0,4);
+												slot0_Nugget.setCount(1);
+												if(slot0_Nugget.hasTag())
 												{
-													if(!slot0.getTag().contains("weight"))
+													if(!slot0_Nugget.getTag().contains("weight"))
 													{
-														slot0.getTag().putString("weight", w);
+														slot0_Nugget.getTag().putString("weight", w);
 													}
 												}
 												else
 												{
-													slot0.getOrCreateTag().putString("weight", w);
+													slot0_Nugget.getOrCreateTag().putString("weight", w);
 												}
 											}
 											if(timePassed == timeProcess)
@@ -192,12 +200,13 @@ public class TileEntityBlockChanger extends TileEntity implements INamedContaine
 												PlayerEntity playerIn = getEntityPlayer();
 												playerIn.getCapability(CapabilityMoney.MONEY_CAPABILITY, null).ifPresent(data -> {
 													double fundsPrev = data.getMoney();
-													String weight = slot0.getTag().getString("weight");
-													double fundsNow = (fundsPrev + (Double.parseDouble(weight) * ConfigFile.multiplierGoldNuggetWeight));
+													String weight = slot0_Nugget.getTag().getString("weight");
+													double fundsNow = (fundsPrev + (Double.parseDouble(weight)));
 													data.setMoney(fundsNow);
-													slot0.split(1);
-													ItemStack copyOfCard = slot1.copy();
-													slot1.split(1);
+													slot0_Nugget.split(1);
+													slot0_Nugget.removeChildTag("weight");
+													ItemStack copyOfCard = slot1_Card.copy();
+													slot1_Card.split(1);
 													tile.setStackInSlot(2, copyOfCard, false);
 													timePassed = 0;
 													isProcessing = false;
@@ -219,7 +228,7 @@ public class TileEntityBlockChanger extends TileEntity implements INamedContaine
 							}
 				}
 			
-				if(slot0.getItem() == Items.AIR || slot1.getItem() == Items.AIR)
+				if(slot0_Nugget.getItem() == Items.AIR || slot1_Card.getItem() == Items.AIR)
 				{
 						timePassed = 0;	
 						isProcessing = false;

@@ -15,6 +15,7 @@ public class PacketSellerCreated {
 
 	private boolean created; 
 	private double cost;
+	private double count;
 	private int x;
 	private int y;
 	private int z;
@@ -24,10 +25,11 @@ public class PacketSellerCreated {
 	
 	public PacketSellerCreated() {}
 	
-	public PacketSellerCreated(boolean createdS, double costS, String nameS, int amountS, int xS, int yS, int zS, boolean adminS)
+	public PacketSellerCreated(boolean createdS, double costS,double countS, String nameS, int amountS, int xS, int yS, int zS, boolean adminS)
 	{
 		this.created = createdS;
 		this.cost = costS;
+		this.count = countS;
 		this.name = nameS;
 		this.amount = amountS;
 		this.x = xS;
@@ -40,13 +42,14 @@ public class PacketSellerCreated {
 	{
 		boolean created = buf.readBoolean();
 		double cost = buf.readDouble();
+		double count = buf.readDouble();
 		String name = buf.readString(32767);
 		int amount = buf.readInt();
 		int x = buf.readInt();
 		int y = buf.readInt();
 		int z = buf.readInt();
 		boolean admin = buf.readBoolean();
-		return new PacketSellerCreated(created, cost, name, amount, x, y, z, admin);
+		return new PacketSellerCreated(created, cost,count, name, amount, x, y, z, admin);
 	}
 
 
@@ -54,6 +57,7 @@ public class PacketSellerCreated {
 	{
 		buf.writeBoolean(packet.created);
 		buf.writeDouble(packet.cost);
+		buf.writeDouble(packet.count);
 		buf.writeString(packet.name);
 		buf.writeInt(packet.amount);
 		buf.writeInt(packet.x);
@@ -77,6 +81,7 @@ public class PacketSellerCreated {
 				{
 					te.setCreated(packet.created); // SERVER ADD CREATED TO TILE ENTITY
 					te.setCost(packet.cost); // SERVER ADD COST TO TILE ENTITY
+					te.setCount(packet.count); // SERVER ADD COST TO TILE ENTITY
 					te.setItem(packet.name); // SERVER ADD NAME TO TILE ENTITY
 					te.setAdmin(packet.admin); // SERVER ADD ADMIN TO TILE ENTITY
 					te.markDirty(); //UPDATE THE TILE ENTITY

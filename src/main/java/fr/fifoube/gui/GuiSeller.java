@@ -52,8 +52,18 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 	private Button twoHundreed;
 	private Button fiveHundreed;
 	private Button unlimitedStack;
-	
-	private double cost;
+
+
+	private Button one_count;
+	private Button two_count;
+	private Button four_count;
+	private Button eight_count;
+	private Button sixteen_count;
+	private Button thirtyTwo_count;
+	private Button sixtyFour_count;
+
+	private double cost = 1;
+	private double count = 1;
 	private boolean admin = false;
 	
 	
@@ -70,6 +80,8 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 		PlayerEntity player = minecraft.player;
 		if(tile.getCreated() == false)
 		{
+			tile.setCost(1);
+			tile.setCount(1);
 			this.validate = this.addButton(new Button(width / 2 + 26, height / 2 + 83, 55, 20, new TranslationTextComponent("title.validate"), (onPress) -> { actionPerformed(this.validate); }));
 			this.one = this.addButton(new Button(width / 2 - 121, height / 2 - 75, 35, 20, new StringTextComponent("1"), (onPress) -> { actionPerformed(this.one); }));
 			this.five = this.addButton(new Button(width / 2 - 121, height / 2 - 56, 35, 20, new StringTextComponent("5"), (onPress) -> { actionPerformed(this.five); }));
@@ -79,6 +91,15 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 			this.hundreed = this.addButton(new Button(width / 2 - 121, height / 2 + 20, 35, 20, new StringTextComponent("100"), (onPress) -> { actionPerformed(this.hundreed); }));
 			this.twoHundreed = this.addButton(new Button(width / 2 - 121, height / 2 + 39, 35, 20, new StringTextComponent("200"), (onPress) -> { actionPerformed(this.twoHundreed); }));
 			this.fiveHundreed = this.addButton(new Button(width / 2 - 121, height / 2 + 58, 35, 20, new StringTextComponent("500"), (onPress) -> { actionPerformed(this.fiveHundreed); }));
+
+			this.one_count = this.addButton(new Button(width / 2 - 161, height / 2 - 75, 35, 20, new StringTextComponent("1"), (onPress) -> { actionPerformed(this.one_count); }));
+			this.two_count = this.addButton(new Button(width / 2 - 161, height / 2 - 56, 35, 20, new StringTextComponent("2"), (onPress) -> { actionPerformed(this.two_count); }));
+			this.four_count = this.addButton(new Button(width / 2 - 161, height / 2 - 37, 35, 20, new StringTextComponent("4"), (onPress) -> { actionPerformed(this.four_count); }));
+			this.eight_count = this.addButton(new Button(width / 2 - 161, height / 2 - 18, 35, 20, new StringTextComponent("8"), (onPress) -> { actionPerformed(this.eight_count); }));
+			this.sixteen_count = this.addButton(new Button(width / 2 - 161, height / 2 + 1, 35, 20, new StringTextComponent("16"), (onPress) -> { actionPerformed(this.sixteen_count); }));
+			this.thirtyTwo_count = this.addButton(new Button(width / 2 - 161, height / 2 + 20, 35, 20, new StringTextComponent("32"), (onPress) -> { actionPerformed(this.thirtyTwo_count); }));
+			this.sixtyFour_count = this.addButton(new Button(width / 2 - 161, height / 2 + 39, 35, 20, new StringTextComponent("64"), (onPress) -> { actionPerformed(this.sixtyFour_count); }));
+
 			if(player.isCreative() == true)
 			{
 				this.unlimitedStack = this.addButton(new Button(width /2 + 2, height / 2 - 96, 80, 13, new TranslationTextComponent("title.unlimited"), (onPress) -> { actionPerformed(this.unlimitedStack); }));
@@ -144,6 +165,41 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 				tile.setCost(500);
 				this.cost = 500;
 			}
+			else if(button == this.one_count)
+			{
+				tile.setCount(1);
+				this.count = 1;
+			}
+			else if(button == this.two_count)
+			{
+				tile.setCount(2);
+				this.count = 2;
+			}
+			else if(button == this.four_count)
+			{
+				tile.setCount(4);
+				this.count = 4;
+			}
+			else if(button == this.eight_count)
+			{
+				tile.setCount(8);
+				this.count = 8;
+			}
+			else if(button == this.sixteen_count)
+			{
+				tile.setCount(16);
+				this.count = 16;
+			}
+			else if(button == this.thirtyTwo_count)
+			{
+				tile.setCount(32);
+				this.count = 32;
+			}
+			else if(button == this.sixtyFour_count)
+			{
+				tile.setCount(64);
+				this.count = 64;
+			}
 			else if(button == this.validate)
 			{
 				if(!(tile.getCost() == 0)) // IF TILE HAS NOT A COST OF 0 THEN WE PASS TO THE OTHER
@@ -161,7 +217,7 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 							String name = tile.getStackInSlot(0).getDisplayName().getString(); // GET ITEM NAME IN TILE THANKS TO STACK IN SLOT
 							tile.setItem(name); // CLIENT SET ITEM NAME
 							tile.markDirty();
-							PacketsRegistery.CHANNEL.sendToServer(new PacketSellerCreated(true, this.cost, name, amount, x, y, z, false)); // SEND SERVER PACKET FOR CREATED, COST, NAME, AMOUNT, X,Y,Z ARE TILE COORDINATES
+							PacketsRegistery.CHANNEL.sendToServer(new PacketSellerCreated(true, this.cost,this.count, name, amount, x, y, z, false)); // SEND SERVER PACKET FOR CREATED, COST, NAME, AMOUNT, X,Y,Z ARE TILE COORDINATES
 							playerIn.closeScreen(); // CLOSE SCREEN
 						}
 						else if(this.admin) //ADMIN HAS SET : UNLIMITED STACK
@@ -175,7 +231,7 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 							String name = tile.getStackInSlot(0).getDisplayName().getString(); // GET ITEM NAME IN TILE THANKS TO STACK IN SLOT
 							tile.setItem(name); // CLIENT SET ITEM NAME
 							tile.markDirty();
-							PacketsRegistery.CHANNEL.sendToServer(new PacketSellerCreated(true, this.cost, name, amount, x, y, z, true)); // SEND SERVER PACKET FOR CREATED, COST, NAME, AMOUNT, X,Y,Z ARE TILE COORDINATES
+							PacketsRegistery.CHANNEL.sendToServer(new PacketSellerCreated(true, this.cost,this.count, name, amount, x, y, z, true)); // SEND SERVER PACKET FOR CREATED, COST, NAME, AMOUNT, X,Y,Z ARE TILE COORDINATES
 							playerIn.closeScreen(); // CLOSE SCREEN
 						}
 						
@@ -207,9 +263,14 @@ public class GuiSeller extends ContainerScreen<ContainerSeller> {
 		} 
 		else { 
 			s = I18n.format("title.limitedStack");
-		} 
+		}
+
+		this.font.drawString(matrixStack, I18n.format("title.costTitle"), -30, -10, Color.WHITE.getRGB());
+		this.font.drawString(matrixStack, I18n.format("title.countTitle"), -70, -10, Color.WHITE.getRGB());
+
 		this.font.drawString(matrixStack, I18n.format("title.cost") + cost, 98, 34, Color.DARK_GRAY.getRGB());
-		this.font.drawString(matrixStack, I18n.format("title.mode") + s, 98, 44, Color.DARK_GRAY.getRGB());
+		this.font.drawString(matrixStack, I18n.format("title.count") + count, 98, 44, Color.DARK_GRAY.getRGB());
+		this.font.drawString(matrixStack, I18n.format("title.mode") + s, 98, 54, Color.DARK_GRAY.getRGB());
 		this.font.drawString(matrixStack, I18n.format("title.block_seller"), 8.0F, 5, Color.DARK_GRAY.getRGB());
 	    this.font.drawString(matrixStack, this.playerInventory.getDisplayName().getString(), 8.0F, (float)(this.ySize - 94), 4210752);
 	}

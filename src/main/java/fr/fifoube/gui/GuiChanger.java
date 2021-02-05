@@ -81,6 +81,7 @@ public class GuiChanger extends ContainerScreen<ContainerChanger> {
 	       //BURNING
 	       if(tile != null)
 	       {
+
 	    	   float display = (tile.getTimePassed() / Float.valueOf(tile.timeProcess)) * 56;
 	    	   if(tile.isProcessing)
 	    	   {	   
